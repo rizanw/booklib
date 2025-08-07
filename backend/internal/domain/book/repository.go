@@ -1,9 +1,11 @@
 package book
 
+import "context"
+
 type Repository interface {
-	AddBook(book *Book)
-	GetAllBooks() []Book
-	GetBookByID(id string) Book
-	UpdateBook(book *Book)
-	DeleteBook(id string)
+	AddBook(ctx context.Context, book *Book) error
+	GetAllBooks(ctx context.Context) ([]Book, error)
+	GetBookByID(ctx context.Context, id string) (*Book, error)
+	UpdateBook(ctx context.Context, book *Book) error
+	DeleteBook(ctx context.Context, id string) error
 }

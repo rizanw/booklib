@@ -6,6 +6,7 @@ import (
 
 	"booklib/internal/infra/config"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/rizanw/go-log"
 )
 

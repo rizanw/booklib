@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"booklib/internal/infra"
 	"booklib/internal/infra/config"
@@ -10,7 +11,7 @@ import (
 )
 
 const (
-	appName = "booklib-http"
+	appName = "booklib"
 )
 
 func main() {
@@ -21,13 +22,13 @@ func main() {
 	// load config
 	conf, err := config.New(appName)
 	if err != nil {
-		return
+		log.Fatal(ctx, err, nil, "failed to load config")
 	}
 
 	// build infra and resource
 	resources, err := infra.NewResources(ctx, conf)
 	if err != nil {
-		return
+		log.Fatal(ctx, err, nil, "failed to build resources")
 	}
 
 	repo := newRepo(resources)
@@ -39,7 +40,8 @@ func main() {
 	})
 	routes(srv, handler)
 
-	if err = srv.Listen(":8080"); err != nil {
+	log.Infof(ctx, nil, nil, "⚡️server started on :%d", conf.Server.Port)
+	if err = srv.Listen(fmt.Sprintf(":%d", conf.Server.Port)); err != nil {
 		log.Fatal(ctx, err, nil, "failed to start server")
 	}
 }
