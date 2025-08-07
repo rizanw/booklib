@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+
+	"booklib/internal/infra"
+	"booklib/internal/infra/config"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rizanw/go-log"
 )
@@ -15,23 +18,28 @@ func main() {
 		ctx = context.Background()
 	)
 
-	err := log.SetConfig(
-		&log.Config{
-			AppName:     appName,
-			Environment: "dev",
-		},
-	)
+	// load config
+	conf, err := config.New(appName)
 	if err != nil {
-		log.Fatal(ctx, err, nil, "failed to set log config")
+		return
 	}
+
+	// build infra and resource
+	resources, err := infra.NewResources(ctx, conf)
+	if err != nil {
+		return
+	}
+
+	repo := newRepo(resources)
+	uc := newUseCase(repo)
+	handler := newHandler(uc)
 
 	srv := fiber.New(fiber.Config{
 		AppName: appName,
 	})
+	routes(srv, handler)
 
-	routes(srv)
-
-	if err := srv.Listen(":8080"); err != nil {
+	if err = srv.Listen(":8080"); err != nil {
 		log.Fatal(ctx, err, nil, "failed to start server")
 	}
 }

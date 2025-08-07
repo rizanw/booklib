@@ -2,7 +2,7 @@ package main
 
 import "github.com/gofiber/fiber/v2"
 
-func routes(srv *fiber.App) {
+func routes(srv *fiber.App, h *Handler) {
 	api := srv.Group("/api")
 	v1 := api.Group("/v1")
 
