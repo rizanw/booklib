@@ -33,12 +33,11 @@ func main() {
 
 	repo := newRepo(resources)
 	uc := newUseCase(repo)
-	handler := newHandler(uc)
 
 	srv := fiber.New(fiber.Config{
 		AppName: appName,
 	})
-	routes(srv, handler)
+	routes(srv, uc)
 
 	log.Infof(ctx, nil, nil, "⚡️server started on :%d", conf.Server.Port)
 	if err = srv.Listen(fmt.Sprintf(":%d", conf.Server.Port)); err != nil {
