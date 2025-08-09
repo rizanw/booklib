@@ -1,12 +1,13 @@
 import {Book} from "@/types/book";
 import {useEffect, useState} from "react";
-import {addBook, getBooks} from "@/data/book";
+import {addBook, deleteBook, getBooks} from "@/data/book";
 
 export default function Home() {
     const [books, setBooks] = useState<Book[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [showModal, setShowModal] = useState<boolean>(false)
     const [errorMessage, setErrorMessage] = useState<string>('')
+    const [bookToDelete, setBookToDelete] = useState<Book | null>(null)
 
     const [form, setForm] = useState({
         title: '',
@@ -28,6 +29,17 @@ export default function Home() {
             setShowModal(false)
         } catch (err) {
             console.error('Failed to add book:', err)
+        }
+    }
+
+    const confirmDelete = async () => {
+        if (!bookToDelete) return
+        try {
+            await deleteBook(bookToDelete.id)
+            await loadBooks()
+            setBookToDelete(null)
+        } catch (err) {
+            setErrorMessage('Failed to delete book')
         }
     }
 
@@ -100,26 +112,26 @@ export default function Home() {
                                 </p>
 
                                 <div className="flex flex-wrap gap-2">
-                                    <a
-                                        href="#"
+                                    <button
+                                        onClick={() => setBookToDelete(book)}
                                         className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                                     >
                                         Delete
                                         <svg
-                                            className="rtl:rotate-180 w-3.5 h-3.5 ml-2"
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
-                                            viewBox="0 0 14 10"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-4 h-4 ml-2"
                                         >
                                             <path
-                                                stroke="currentColor"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M1 5h12m0 0L9 1m4 4L9 9"
+                                                d="M6 18L18 6M6 6l12 12"
                                             />
                                         </svg>
-                                    </a>
+                                    </button>
 
                                     <a
                                         href="#"
@@ -127,17 +139,17 @@ export default function Home() {
                                     >
                                         Edit
                                         <svg
-                                            className="rtl:rotate-180 w-3.5 h-3.5 ml-2"
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
-                                            viewBox="0 0 14 10"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-4 h-4 ml-2"
                                         >
                                             <path
-                                                stroke="currentColor"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M1 5h12m0 0L9 1m4 4L9 9"
+                                                d="M15.232 5.232l3.536 3.536M16.5 3.75a2.121 2.121 0 113 3L7.5 19.5H3v-4.5L16.5 3.75z"
                                             />
                                         </svg>
                                     </a>
@@ -148,10 +160,10 @@ export default function Home() {
                                     >
                                         Detail
                                         <svg
-                                            className="rtl:rotate-180 w-3.5 h-3.5 ml-2"
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
                                             viewBox="0 0 14 10"
+                                            className="w-4 h-4 ml-2"
                                         >
                                             <path
                                                 stroke="currentColor"
@@ -227,8 +239,32 @@ export default function Home() {
                     </div>
                 </div>
             )}
+            {bookToDelete && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-md max-w-sm w-full">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-2">Confirm Delete</h2>
+                        <p className="text-gray-700 mb-4">
+                            Are you sure you want to delete <b>{bookToDelete.title}</b>?
+                        </p>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                onClick={() => setBookToDelete(null)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                                onClick={confirmDelete}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {errorMessage !== '' && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-md max-w-sm w-full">
                         <h2 className="text-lg font-semibold text-red-600 mb-2">Error</h2>
                         <p className="text-gray-700 mb-4">{errorMessage}</p>
