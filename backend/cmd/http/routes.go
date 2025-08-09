@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "booklib/docs"
 	hbook "booklib/internal/handler/http/book"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
 )
 
 func routes(srv *fiber.App, uc *UseCase) {
+	srv.Get("/docs/*", swagger.HandlerDefault)
+
 	api := srv.Group("/api")
 	v1 := api.Group("/v1")
 

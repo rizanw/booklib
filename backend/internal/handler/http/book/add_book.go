@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// AddBookRequest represents the request payload for adding a book
 type AddBookRequest struct {
 	Title  string `json:"title"`
 	Author string `json:"author"`
@@ -30,6 +31,17 @@ func (req *AddBookRequest) parseValidateRequest() (book.AddBookInput, error) {
 	}, nil
 }
 
+// AddBook godoc
+// @Summary Add a new book
+// @Description Creates a new book and returns success status
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param book body book.AddBookRequest true "Book to create"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books [post]
 func (h *Handler) AddBook(c *fiber.Ctx) error {
 	var req AddBookRequest
 
@@ -53,7 +65,7 @@ func (h *Handler) AddBook(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"status": "success",
 	})
 }

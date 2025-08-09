@@ -1,5 +1,19 @@
 package main
 
+// @title BookLib API
+// @version 1.0
+// @description This is Book Library API.
+// @termsOfService http://booklib.rzndwb.xyz/terms/
+
+// @contact.name API Support
+// @contact.url http://booklib.rzndwb.xyz/support
+// @contact.email support@rzndwb.xyz
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @BasePath /api/v1
+
 import (
 	"context"
 	"fmt"

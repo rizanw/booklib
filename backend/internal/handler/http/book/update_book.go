@@ -1,11 +1,13 @@
 package book
 
 import (
-	"booklib/internal/usecase/book"
 	"errors"
+
+	"booklib/internal/usecase/book"
 	"github.com/gofiber/fiber/v2"
 )
 
+// UpdateBookRequest represents the request payload for updating a book
 type UpdateBookRequest struct {
 	Title  string `json:"title"`
 	Author string `json:"author"`
@@ -30,6 +32,18 @@ func (req *UpdateBookRequest) parseValidateRequest() (book.UpdateBookInput, erro
 	}, nil
 }
 
+// UpdateBook godoc
+// @Summary Update an existing book
+// @Description Updates the details of a book
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID"
+// @Param book body book.UpdateBookRequest true "Updated book data"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books/{id} [put]
 func (h *Handler) UpdateBook(c *fiber.Ctx) error {
 	var req UpdateBookRequest
 
