@@ -33,7 +33,7 @@ func (req *AddBookRequest) parseValidateRequest() (book.AddBookInput, error) {
 func (h *Handler) AddBook(c *fiber.Ctx) error {
 	var req AddBookRequest
 
-	if err := c.BodyParser(req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Cannot parse JSON",
 		})

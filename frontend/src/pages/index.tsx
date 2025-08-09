@@ -1,28 +1,55 @@
-import Link from 'next/link'
 import {Book} from "@/types/book";
 import {useEffect, useState} from "react";
-import {getBooks} from "@/data/book";
+import {addBook, getBooks} from "@/data/book";
 
 export default function Home() {
     const [books, setBooks] = useState<Book[]>([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState<boolean>(true)
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [errorMessage, setErrorMessage] = useState<string>('')
+
+    const [form, setForm] = useState({
+        title: '',
+        author: '',
+        year: '',
+    })
+
+    const handleAddBook = async (e: React.FormEvent) => {
+        e.preventDefault()
+        try {
+            await addBook({
+                id: '',
+                title: form.title,
+                author: form.author,
+                year: parseInt(form.year),
+            })
+            await loadBooks()
+            setForm({title: '', author: '', year: ''})
+            setShowModal(false)
+        } catch (err) {
+            console.error('Failed to add book:', err)
+        }
+    }
+
+    const loadBooks = async () => {
+        try {
+            setLoading(true)
+            setErrorMessage('')
+            const data = await getBooks()
+            setBooks(data)
+        } catch (err: any) {
+            setErrorMessage(err.message || 'Something went wrong')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
-        const load = async () => {
-            try {
-                const data = await getBooks()
-                setBooks(data)
-            } catch (err) {
-                console.error(err)
-            } finally {
-                setLoading(false)
-            }
-        }
-        load()
+        loadBooks()
     }, [])
 
     return (
-        <main className="p-6">
+        <main className="pt-24 px-8">
             <nav
                 className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -32,7 +59,7 @@ export default function Home() {
                         </span>
                     </a>
                     <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                        <button type="button" data-modal-target="default-modal" data-modal-toggle="default-modal"
+                        <button type="button" onClick={() => setShowModal(true)}
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Add Book
                         </button>
@@ -42,8 +69,8 @@ export default function Home() {
                             <span className="sr-only">Open main menu</span>
                             <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                                  viewBox="0 0 17 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                                      strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
                             </svg>
                         </button>
                     </div>
@@ -53,38 +80,175 @@ export default function Home() {
                 </div>
             </nav>
 
-            <ul className="space-y-4">
+            <div className="flex overflow-x-auto space-x-4 pb-4">
                 {loading ? (
                     <p className="text-center text-gray-600">Loading books...</p>
                 ) : (
-                    <ul className="space-y-4 max-w-3xl mx-auto mt-6">
+                    <div className="flex flex-wrap gap-4">
                         {books.map((book) => (
-                            <li key={book.id}
-                                className="bg-white border p-4 rounded shadow flex justify-between items-start">
-                                <div>
-                                    <h2 className="text-xl font-semibold">{book.title}</h2>
-                                    <p className="text-gray-600">by {book.author}</p>
-                                    <p className="text-sm text-gray-500 mt-1">{book.year}</p>
-                                </div>
-                                <div className="space-x-3 text-sm">
-                                    <Link href={`/${book.id}`} className="text-blue-600 hover:underline">View</Link>
-                                    <Link href={`/${book.id}/edit`}
-                                          className="text-yellow-500 hover:underline">Edit</Link>
-                                    <button
-                                        onClick={() => function () {
-                                            // todo: delete book
-                                        }}
-                                        className="text-red-500 hover:underline"
+                            <div
+                                key={book.id}
+                                className="min-w-[250px] max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+                            >
+                                <a href="#">
+                                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                        {book.title}
+                                    </h5>
+                                </a>
+                                <p className="mb-3 font-normal text-gray-600 dark:text-gray-400">
+                                    by <b>{book.author}</b>, {book.year}
+                                </p>
+
+                                <div className="flex flex-wrap gap-2">
+                                    <a
+                                        href="#"
+                                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                                     >
                                         Delete
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </ul>
+                                        <svg
+                                            className="rtl:rotate-180 w-3.5 h-3.5 ml-2"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 14 10"
+                                        >
+                                            <path
+                                                stroke="currentColor"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M1 5h12m0 0L9 1m4 4L9 9"
+                                            />
+                                        </svg>
+                                    </a>
 
+                                    <a
+                                        href="#"
+                                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                                    >
+                                        Edit
+                                        <svg
+                                            className="rtl:rotate-180 w-3.5 h-3.5 ml-2"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 14 10"
+                                        >
+                                            <path
+                                                stroke="currentColor"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M1 5h12m0 0L9 1m4 4L9 9"
+                                            />
+                                        </svg>
+                                    </a>
+
+                                    <a
+                                        href="#"
+                                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                    >
+                                        Detail
+                                        <svg
+                                            className="rtl:rotate-180 w-3.5 h-3.5 ml-2"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 14 10"
+                                        >
+                                            <path
+                                                stroke="currentColor"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M1 5h12m0 0L9 1m4 4L9 9"
+                                            />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {showModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+                        <h3 className="text-xl font-semibold mb-4">Add New Book</h3>
+                        <form onSubmit={handleAddBook} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Title</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={form.title}
+                                    onChange={(e) => setForm({...form, title: e.target.value})}
+                                    className="w-full border border-gray-300 p-2 rounded"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Author</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={form.author}
+                                    onChange={(e) => setForm({...form, author: e.target.value})}
+                                    className="w-full border border-gray-300 p-2 rounded"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Year</label>
+                                <input
+                                    type="number"
+                                    min="1400"
+                                    max="2100"
+                                    required
+                                    value={form.year}
+                                    onChange={(e) =>
+                                        setForm({...form, year: e.target.value.replace(/\D/, '')})
+                                    }
+                                    className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div className="flex justify-end space-x-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    className="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {errorMessage !== '' && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-md max-w-sm w-full">
+                        <h2 className="text-lg font-semibold text-red-600 mb-2">Error</h2>
+                        <p className="text-gray-700 mb-4">{errorMessage}</p>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                                onClick={() => setErrorMessage('')}
+                            >
+                                Close
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                onClick={loadBooks}
+                            >
+                                Retry
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     )
 }

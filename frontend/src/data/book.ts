@@ -2,16 +2,40 @@ import {Book} from "@/types/book";
 
 const API_URL = 'http://0.0.0.0:8080/api/v1/books'
 
+interface ApiResponse<T> {
+    data: T
+    message: string
+    status: string
+}
+
 export async function getBooks(): Promise<Book[]> {
     const res = await fetch(API_URL)
-    if (!res.ok) throw new Error('Failed to fetch books')
-    return res.json()
+    const json: ApiResponse<Book[]> = await res.json()
+
+    if (json.message !== 'success') {
+        throw new Error(`API error: ${json.message}`)
+    }
+
+    return json.data || []
 }
 
 export async function getBookById(id: string): Promise<Book> {
     const res = await fetch(`${API_URL}/${id}`)
-    if (!res.ok) throw new Error('Failed to fetch book')
-    return res.json()
+    const json: ApiResponse<Book> = await res.json()
+    return json.data
+}
+
+export async function addBook(book: Book) {
+    const res = await fetch(`${API_URL}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(book),
+    })
+    const json: ApiResponse<Book> = await res.json()
+    if (json.status !== 'success') {
+        throw new Error(`API error: ${json.message}`)
+    }
+    return json.data
 }
 
 export async function updateBook(book: Book): Promise<Book> {

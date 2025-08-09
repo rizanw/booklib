@@ -6,10 +6,10 @@ import (
 )
 
 type Book struct {
-	ID     string
-	Title  string
-	Author string
-	Year   int
+	ID     string `json:"id"`
+	Title  string `json:"title"`
+	Author string `json:"author"`
+	Year   int    `json:"year"`
 }
 
 func NewBook(title, author string, year int) (*Book, error) {
