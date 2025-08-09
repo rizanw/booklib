@@ -38,14 +38,15 @@ export async function addBook(book: Book) {
     return json.data
 }
 
-export async function updateBook(book: Book): Promise<Book> {
-    const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+export async function updateBook(book: Book) {
+    const res = await fetch(`${API_URL}/${book.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify(book),
     })
-    if (!res.ok) throw new Error('Failed to add book')
-    return res.json()
+    if (!res.ok) throw new Error('Failed to update book')
 }
 
 export async function deleteBook(id: string): Promise<void> {

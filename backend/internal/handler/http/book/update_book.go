@@ -41,7 +41,7 @@ func (h *Handler) UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := c.BodyParser(req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status": "error",
 			"error":  "Cannot parse JSON",
