@@ -1,10 +1,10 @@
 import {Book} from "@/types/book";
 
-const API_URL = 'http://0.0.0.0:8080/api/v1/books'
+const API_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/books`
 
 interface ApiResponse<T> {
     data: T
-    message: string
+    error: string
     status: string
 }
 
@@ -12,8 +12,8 @@ export async function getBooks(): Promise<Book[]> {
     const res = await fetch(API_URL)
     const json: ApiResponse<Book[]> = await res.json()
 
-    if (json.message !== 'success') {
-        throw new Error(`API error: ${json.message}`)
+    if (json.status !== 'success') {
+        throw new Error(`API error: ${json.error}`)
     }
 
     return json.data || []
@@ -33,7 +33,7 @@ export async function addBook(book: Book) {
     })
     const json: ApiResponse<Book> = await res.json()
     if (json.status !== 'success') {
-        throw new Error(`API error: ${json.message}`)
+        throw new Error(`API error: ${json.error}`)
     }
     return json.data
 }
