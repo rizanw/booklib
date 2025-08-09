@@ -7,6 +7,7 @@ import (
 	"booklib/internal/infra"
 	"booklib/internal/infra/config"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/rizanw/go-log"
 )
 
@@ -37,6 +38,7 @@ func main() {
 	srv := fiber.New(fiber.Config{
 		AppName: appName,
 	})
+	srv.Use(cors.New())
 	routes(srv, uc)
 
 	log.Infof(ctx, nil, nil, "⚡️server started on :%d", conf.Server.Port)
