@@ -21,7 +21,7 @@ func (h *Handler) GetAllBooks(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "success",
-		"data":    books,
+		"status": "success",
+		"data":   books,
 	})
 }

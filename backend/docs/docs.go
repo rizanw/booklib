@@ -123,7 +123,7 @@ const docTemplate = `{
                 "summary": "Get a book by ID",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Book ID",
                         "name": "id",
                         "in": "path",

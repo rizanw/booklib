@@ -31,6 +31,6 @@ func (h *Handler) DeleteBook(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "success",
+		"status": "success",
 	})
 }

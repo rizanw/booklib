@@ -8,7 +8,7 @@ import "github.com/gofiber/fiber/v2"
 // @Tags books
 // @Accept json
 // @Produce json
-// @Param id path int true "Book ID"
+// @Param id path string true "Book ID"
 // @Success 200 {object} map[string]string
 // @Router /books/{id} [get]
 func (h *Handler) GetBook(c *fiber.Ctx) error {
@@ -29,7 +29,7 @@ func (h *Handler) GetBook(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message": "success",
-		"data":    res,
+		"status": "success",
+		"data":   res,
 	})
 }
