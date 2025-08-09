@@ -256,6 +256,61 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/process-url": {
+            "post": {
+                "description": "Cleans or modifies a URL based on the specified operation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "URLProcessor"
+                ],
+                "summary": "Clean and process a URL",
+                "parameters": [
+                    {
+                        "description": "URL processor request payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler_http_url-processor.ProcessUrlRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Processed URL returned",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -284,6 +339,17 @@ const docTemplate = `{
                 },
                 "year": {
                     "type": "integer"
+                }
+            }
+        },
+        "internal_handler_http_url-processor.ProcessUrlRequest": {
+            "type": "object",
+            "properties": {
+                "operation": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         }

@@ -3,6 +3,7 @@ package main
 import (
 	_ "booklib/docs"
 	hbook "booklib/internal/handler/http/book"
+	hurlprocessor "booklib/internal/handler/http/url-processor"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 )
@@ -10,14 +11,22 @@ import (
 func routes(srv *fiber.App, uc *UseCase) {
 	srv.Get("/docs/*", swagger.HandlerDefault)
 
+	srv.Get("/ping", func(c *fiber.Ctx) error {
+		return c.SendString("PONG!!")
+	})
+
+	urlProcessorRoutes(srv, uc)
+
 	api := srv.Group("/api")
 	v1 := api.Group("/v1")
 
-	srv.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
-
 	bookRoutes(v1, uc)
+}
+
+func urlProcessorRoutes(router fiber.Router, uc *UseCase) {
+	handler := hurlprocessor.New(uc.UrlProcessor)
+
+	router.Post("/process-url", handler.ProcessUrl)
 }
 
 func bookRoutes(router fiber.Router, uc *UseCase) {

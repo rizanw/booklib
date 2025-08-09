@@ -18,6 +18,13 @@ definitions:
       year:
         type: integer
     type: object
+  internal_handler_http_url-processor.ProcessUrlRequest:
+    properties:
+      operation:
+        type: string
+      url:
+        type: string
+    type: object
 info:
   contact:
     email: support@rzndwb.xyz
@@ -186,4 +193,40 @@ paths:
       summary: Update an existing book
       tags:
       - books
+  /process-url:
+    post:
+      consumes:
+      - application/json
+      description: Cleans or modifies a URL based on the specified operation.
+      parameters:
+      - description: URL processor request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler_http_url-processor.ProcessUrlRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Processed URL returned
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Clean and process a URL
+      tags:
+      - URLProcessor
 swagger: "2.0"
