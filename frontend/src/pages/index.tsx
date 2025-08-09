@@ -1,8 +1,25 @@
 import Link from 'next/link'
 import {Book} from "@/types/book";
+import {useEffect, useState} from "react";
+import {getBooks} from "@/data/book";
 
 export default function Home() {
-    const books: Book[] = []
+    const [books, setBooks] = useState<Book[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const data = await getBooks()
+                setBooks(data)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        load()
+    }, [])
 
     return (
         <main className="p-6">
@@ -37,26 +54,35 @@ export default function Home() {
             </nav>
 
             <ul className="space-y-4">
-                {books.map((book) => (
-                    <li key={book.id} className="border p-4 rounded shadow flex justify-between items-center">
-                        <div>
-                            <h2 className="text-xl font-semibold">{book.title}</h2>
-                            <p className="text-gray-600">by {book.author}</p>
-                        </div>
-                        <div className="space-x-3">
-                            <Link href={`/${book.id}`} className="text-blue-600">View</Link>
-                            <Link href={`/${book.id}/edit`} className="text-yellow-500">Edit</Link>
-                            <button
-                                onClick={() => {
-                                    location.reload()
-                                }}
-                                className="text-red-500"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </li>
-                ))}
+                {loading ? (
+                    <p className="text-center text-gray-600">Loading books...</p>
+                ) : (
+                    <ul className="space-y-4 max-w-3xl mx-auto mt-6">
+                        {books.map((book) => (
+                            <li key={book.id}
+                                className="bg-white border p-4 rounded shadow flex justify-between items-start">
+                                <div>
+                                    <h2 className="text-xl font-semibold">{book.title}</h2>
+                                    <p className="text-gray-600">by {book.author}</p>
+                                    <p className="text-sm text-gray-500 mt-1">{book.year}</p>
+                                </div>
+                                <div className="space-x-3 text-sm">
+                                    <Link href={`/${book.id}`} className="text-blue-600 hover:underline">View</Link>
+                                    <Link href={`/${book.id}/edit`}
+                                          className="text-yellow-500 hover:underline">Edit</Link>
+                                    <button
+                                        onClick={() => function () {
+                                            // todo: delete book
+                                        }}
+                                        className="text-red-500 hover:underline"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </ul>
 
         </main>
