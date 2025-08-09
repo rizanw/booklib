@@ -19,7 +19,11 @@ npm install
 
 ### 3. Environment Variables
 
-Create .env.development file in the project root to .env
+Create a .env.local file in the project root with:
+
+```
+NEXT_PUBLIC_BOOKLIB_API_BASE_URL=http://localhost:8080
+```
 
 ### 4. Run Development Server
 

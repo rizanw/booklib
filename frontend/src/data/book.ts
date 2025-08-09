@@ -1,6 +1,6 @@
 import {Book} from "@/types/book";
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/books`
+const API_URL = `${process.env.NEXT_PUBLIC_BOOKLIB_API_BASE_URL}/api/v1/books`
 
 interface ApiResponse<T> {
     data: T

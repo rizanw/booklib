@@ -15,12 +15,11 @@ func routes(srv *fiber.App, uc *UseCase) {
 		return c.SendString("PONG!!")
 	})
 
-	urlProcessorRoutes(srv, uc)
-
 	api := srv.Group("/api")
 	v1 := api.Group("/v1")
 
 	bookRoutes(v1, uc)
+	urlProcessorRoutes(v1, uc)
 }
 
 func urlProcessorRoutes(router fiber.Router, uc *UseCase) {
