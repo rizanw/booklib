@@ -16,10 +16,10 @@ import "github.com/gofiber/fiber/v2"
 // @Router /books/{id} [delete]
 func (h *Handler) DeleteBook(c *fiber.Ctx) error {
 	id := c.Params("id")
-	if err := h.usecase.DeleteBook(c.Context(), id); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status": "error",
-			"error":  err.Error(),
+			"error":  "id cannot be empty",
 		})
 	}
 

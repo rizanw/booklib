@@ -2,6 +2,7 @@ package book
 
 import "context"
 
+//go:generate mockery --name=Repository --output=./mocks
 type Repository interface {
 	AddBook(ctx context.Context, book *Book) error
 	GetAllBooks(ctx context.Context) ([]Book, error)

@@ -1,10 +1,12 @@
 package book
 
 import (
-	domain "booklib/internal/domain/book"
 	"context"
+
+	domain "booklib/internal/domain/book"
 )
 
+//go:generate mockery --name=UseCase --output=./mocks
 type UseCase interface {
 	GetBook(ctx context.Context, id string) (*domain.Book, error)
 	GetAllBooks(ctx context.Context) ([]domain.Book, error)

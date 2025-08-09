@@ -4,3 +4,6 @@
 
 # binary files
 bin/*
+
+# test
+coverage.out

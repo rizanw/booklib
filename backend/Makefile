@@ -18,3 +18,12 @@ run:
 	@echo " >> executing booklib"
 	@./bin/booklib
 	@echo " >> booklib is running"
+
+test:
+	go test ./... -v
+
+coverage:
+	go test ./... -coverprofile=coverage.out -v
+
+coveragetext: coverage
+	go tool cover -func=coverage.out
