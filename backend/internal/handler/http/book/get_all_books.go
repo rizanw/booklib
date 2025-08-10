@@ -1,6 +1,9 @@
 package book
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/rizanw/go-log"
+)
 
 // GetAllBooks godoc
 // @Summary Get all books
@@ -12,8 +15,9 @@ import "github.com/gofiber/fiber/v2"
 // @Failure 500 {object} map[string]interface{}
 // @Router /books [get]
 func (h *Handler) GetAllBooks(c *fiber.Ctx) error {
-	books, err := h.usecase.GetAllBooks(c.Context())
+	books, err := h.usecase.GetAllBooks(c.UserContext())
 	if err != nil {
+		log.Error(c.UserContext(), err, nil, "failed to get all books")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status": "error",
 			"error":  err.Error(),

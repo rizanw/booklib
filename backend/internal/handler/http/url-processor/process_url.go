@@ -2,6 +2,7 @@ package urlprocessor
 
 import (
 	"errors"
+	"github.com/rizanw/go-log"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -48,8 +49,9 @@ func (h *Handler) ProcessUrl(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := h.usecase.CleanURL(c.Context(), req.Operation, req.Url)
+	res, err := h.usecase.CleanURL(c.UserContext(), req.Operation, req.Url)
 	if err != nil {
+		log.Error(c.UserContext(), err, nil, "failed to clean url")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})

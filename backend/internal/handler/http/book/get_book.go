@@ -1,6 +1,9 @@
 package book
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/rizanw/go-log"
+)
 
 // GetBook godoc
 // @Summary Get a book by ID
@@ -20,8 +23,9 @@ func (h *Handler) GetBook(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := h.usecase.GetBook(c.Context(), id)
+	res, err := h.usecase.GetBook(c.UserContext(), id)
 	if err != nil {
+		log.Error(c.UserContext(), err, nil, "failed to get book")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status": "error",
 			"error":  err.Error(),

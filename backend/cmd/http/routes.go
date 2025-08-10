@@ -4,12 +4,15 @@ import (
 	_ "booklib/docs"
 	hbook "booklib/internal/handler/http/book"
 	hurlprocessor "booklib/internal/handler/http/url-processor"
+	"booklib/pkg/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 )
 
 func routes(srv *fiber.App, uc *UseCase) {
 	srv.Get("/docs/*", swagger.HandlerDefault)
+
+	srv.Use(middleware.AccessLogMiddleware())
 
 	srv.Get("/ping", func(c *fiber.Ctx) error {
 		return c.SendString("PONG!!")

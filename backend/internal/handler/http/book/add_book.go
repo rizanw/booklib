@@ -4,6 +4,7 @@ import (
 	"booklib/internal/usecase/book"
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	"github.com/rizanw/go-log"
 )
 
 // AddBookRequest represents the request payload for adding a book
@@ -58,7 +59,8 @@ func (h *Handler) AddBook(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := h.usecase.AddBook(c.Context(), in); err != nil {
+	if err := h.usecase.AddBook(c.UserContext(), in); err != nil {
+		log.Error(c.UserContext(), err, nil, "failed to add book")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status": "error",
 			"error":  err.Error(),

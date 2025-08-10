@@ -1,6 +1,9 @@
 package book
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/rizanw/go-log"
+)
 
 // DeleteBook godoc
 // @Summary Delete a book by ID
@@ -23,7 +26,8 @@ func (h *Handler) DeleteBook(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := h.usecase.DeleteBook(c.Context(), id); err != nil {
+	if err := h.usecase.DeleteBook(c.UserContext(), id); err != nil {
+		log.Error(c.UserContext(), err, nil, "failed to delete book")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status": "error",
 			"error":  err.Error(),

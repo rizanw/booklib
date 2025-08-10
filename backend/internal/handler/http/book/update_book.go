@@ -2,6 +2,7 @@ package book
 
 import (
 	"errors"
+	"github.com/rizanw/go-log"
 
 	"booklib/internal/usecase/book"
 	"github.com/gofiber/fiber/v2"
@@ -70,7 +71,8 @@ func (h *Handler) UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	if err = h.usecase.UpdateBook(c.Context(), id, in); err != nil {
+	if err = h.usecase.UpdateBook(c.UserContext(), id, in); err != nil {
+		log.Error(c.UserContext(), err, nil, "failed to update book")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status": "error",
 			"error":  err.Error(),
